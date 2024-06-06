@@ -2,6 +2,8 @@
 
 const { pool } = require('../db');
 const { insertReserveBook, insertReserveDetail } = require('./queries');
+const { getTransactionsz } = require('./queries');
+
 
 const createTransaction = async (req, res) => {
   const { customerID, reserveDate, books } = req.body;
@@ -13,7 +15,6 @@ const createTransaction = async (req, res) => {
 
     // Insert into ReserveBook table
     const reserveBookResult = await client.query(insertReserveBook, [customerID, reserveDate]);
-
     const reserveID = reserveBookResult.rows[0].reserveid;
 
     // Insert into ReserveDetail table
@@ -32,6 +33,16 @@ const createTransaction = async (req, res) => {
   }
 };
 
+const getTransactions = async (req, res) => {
+  try {
+    const result = await pool.query(getTransactionsz);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
-  createTransaction
+  createTransaction,
+  getTransactions
 };
